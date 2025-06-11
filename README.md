@@ -3,7 +3,7 @@
     - https://docs.flutter.dev/get-started/install/windows/mobile
     - https://developer.android.com/studio
     - https://codelabs.developers.google.com/codelabs/flutter-codelab-first
-        - This is what the project is based on
+      ^ This is what the project is based on
 - Will Expand to iOS after a prototype on Android has been built
     - https://developer.apple.com/xcode/
     - https://developer.apple.com/testflight/
