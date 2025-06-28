@@ -1,0 +1,22 @@
+[
+  {
+    "name": "non-medical",
+    "description": "Only use this expert if the user's message is not related to the patient or any medical content. This includes casual greetings, system commands, or polite responses. \n\nExamples of when to use:\n- 'Hi'\n- 'Thank you'\n- 'What’s your name?'\n\nExamples of when NOT to use:\n- 'What are the patient’s symptoms?'\n- 'Is he on antibiotics?'"
+  },
+  {
+    "name": "general",
+    "description": "Use this expert for clinical reasoning or broad medical questions that are not focused specifically on medications or provider documentation. This includes interpreting patient findings, generating differential diagnoses, or explaining a clinical scenario.\n\nExamples of when to use:\n- 'What’s your impression of this patient?'\n- 'Why might she be short of breath?'\n- 'Tell me about the patient.'\n\nExamples of when NOT to use:\n- 'What medications is she on?' (use 'medications')\n- 'What did cardiology write in their note?' (use 'documents')\n- 'What were the last labs?' (use 'labs')"
+  },
+  {
+    "name": "medications",
+    "description": "Only use this expert if the user explicitly asks about medications. This includes listing current or past medications, checking for interactions, or reviewing doses.\n\nExamples of when to use:\n- 'What meds is he taking?'\n- 'Any drug interactions?'\n- 'How often does she take insulin?'\n\nExamples of when NOT to use:\n- 'What did the doctor write about medications?' (use 'documents')\n- 'Is her high blood pressure controlled?' (use 'general')\n- 'What were the last labs?' (use 'labs')"
+  },
+  {
+    "name": "documents",
+    "description": "Only use this expert if the user is referencing something that a provider wrote in a clinical note. This includes SOAP notes, progress notes, consults, discharge summaries, and encounter documentation.\n\nExamples of when to use:\n- 'What did cardiology say?'\n- 'What was in the last visit note?'\n- 'What did the provider write about chest pain?'\n\nExamples of when NOT to use:\n- 'What are the patient’s diagnoses?' (use 'general')\n- 'Is she on lisinopril?' (use 'medications')\n- 'What were the last labs?' (use 'labs')"
+  },
+  {
+    "name": "lab",
+    "description": "Only use this expert if the user is asking about lab results, lab values, or diagnostic reports that include laboratory testing. This includes retrieving, summarizing, or interpreting any lab data. \n\nExamples of when to use:\n- 'What were her blood test results?'\n- 'Any abnormal labs?'\n- 'Give me a summary of all labs done on this patient.'\n\nExamples of when NOT to use:\n- 'What meds is she on?' (use 'medications')\n- 'What did the doctor write in their note?' (use 'documents')\n- 'Why might the patient be anemic?' (use 'general')"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "charles-bayer",
+    "name": "Charles Bayer",
+    "room": "101"
+  },
+  {
+    "id": "cyndi-romaguera",
+    "name": "Cyndi Romaguera",
+    "room": "102"
+  },
+  {
+    "id": "keith-ebert",
+    "name": "Keith Ebert",
+    "room": "103"
+  }
+]

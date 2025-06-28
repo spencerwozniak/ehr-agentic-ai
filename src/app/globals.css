@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* Root-level base styles */
+:root {
+  --font-body: 'Quicksand', sans-serif;
+  --color-text: #4e443b;
+  --color-bg: #f8f7f2;
+}
+
+html, body {
+  -webkit-app-region: drag;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  min-width: 320px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  scroll-behavior: smooth;
+  overflow-x: clip;
+
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6em;
+  color: var(--color-text);
+  background: transparent;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, textarea, a, .no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Typography */
+h1, h2, h3 {
+  font-family: var(--font-body);
+}
+
+/* With this safer version */
+h1 {
+  line-height: 1.1;
+}
+
+h4, h5, h6 {
+  font-weight: 700;
+}
+
+p {
+  font-weight: 600;
+}
+
+a {
+  font-weight: 700;
+  color: #977a5f;
+  text-decoration: inherit;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+a:hover {
+  color: #919191;
+}
+
+i, em {
+  font-style: italic;
+}
+
+blockquote {
+  border-left: 4px solid #8d9c9950;
+  padding: 0.05rem 1.25em;
+  margin: 1rem;
+}
+
+@media (max-width: 768px) {
+  blockquote {
+    border-left: 4px solid #bfaa8d50;
+  }
+}

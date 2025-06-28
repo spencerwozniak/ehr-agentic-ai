@@ -1,0 +1,95 @@
+
+import {
+  FaBrain,
+  FaHeartbeat,
+  FaLaptopMedical,
+  FaRobot,
+  FaUsers,
+  FaChartLine,
+} from 'react-icons/fa';
+
+
+      <section className={styles.infoSection}>
+        <div className={styles.infoColumns}>
+          {[
+            {
+              icon: <FaBrain />,
+              title: 'WHO WE ARE',
+              text: `Serelora is an AI mental health company reimagining therapy and brain wellness. We're building tools that make early detection and daily mental health support more accessible and compassionate.`
+            },
+            {
+              icon: <FaLaptopMedical />,
+              title: 'WHAT WE DO',
+              text: `We develop AI-powered mental health tools—from cognitive screening tests and emotion-aware journaling to behavior tracking and lifestyle insights—designed to act like an AI therapist and support day-to-day wellbeing.`
+            },
+            {
+              icon: <FaChartLine />,
+              title: 'WHY IT MATTERS',
+              text: `1 in 5 adults struggle with mental health each year. Millions lack access to timely mental health care. Our platform offers a new kind of support—evidence-based, AI-enabled, and always available.`
+            }            
+          ].map(({ icon, title, text }) => (
+            <div key={title} className={styles.infoColumn}>
+              <div className={styles.iconHeading}>
+                <div className={styles.iconContainer}>
+                  <span className={styles.infoIcon}>{icon}</span>
+                </div>
+                <h3 className={styles.headingText}>{title}</h3>
+              </div>
+              <p>{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.servicesSection}>
+        <div className={styles.wpbWrapper}>
+          <span className={styles.textSeparator}>
+            <span className={styles.separatorWrapper}>
+              <span className={styles.mkdLineBefore}></span>
+              <span className={styles.servicesHeading}>What We Offer</span>
+              <span className={styles.mkdLineAfter}></span>
+            </span>
+          </span>
+          <div className={styles.wpbTextColumn}>
+            <div className={styles.wpbWrapper}>
+              <h4>AI Therapy Tools for Mental Wellness</h4>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.servicesColumns}>
+          {[
+            {
+              icon: <FaRobot />,
+              title: 'AI-Powered Mental Health Screening',
+              text: `Get fast, research-informed screening for anxiety, depression, and cognitive changes using tools designed to feel conversational, not clinical. Our AI therapist models personalize the experience with emotional intelligence.`,
+              link: '/screening',
+              label: 'Explore Screening Tools'
+            },
+            {
+              icon: <FaHeartbeat />,
+              title: 'Mood & Lifestyle Tracking',
+              text: `Track your mental health through daily check-ins, mood journals, and behavioral habits. Get personalized insights and wellness guidance from our AI-powered platform.`,
+              link: '/tracking',
+              label: 'Start Tracking'
+            },
+            {
+              icon: <FaUsers />,
+              title: 'Caregiver & Family Support',
+              text: `We equip caregivers with AI-driven tools, cognitive health summaries, and shared dashboards to help support loved ones experiencing cognitive or emotional challenges.`,
+              link: '/caregiver',
+              label: 'Caregiver Support'
+            }
+          ].map(({ icon, title, text, link, label }) => (
+            <div key={title} className={styles.servicesColumn}>
+              <div className={styles.servicesIconHeading}>
+                <div className={styles.servicesIconContainer}>
+                  <span className={styles.servicesIcon}>{icon}</span>
+                </div>
+                <h3 className={styles.servicesHeadingText}>{title}</h3>
+              </div>
+              <p>{text}</p>
+              <NavButton to={link} label={label} className={styles.homeButton} />
+            </div>
+          ))}
+        </div>
