@@ -1,5 +1,7 @@
 [
     "Tell me about the patient.",
     "What were the last labs?",
-    "Any recent procedures?"
+    "Any recent procedures?",
+    "Is the patient a fall risk?",
+    "What was the last admission?"
 ]

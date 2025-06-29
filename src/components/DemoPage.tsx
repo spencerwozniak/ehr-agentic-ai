@@ -10,6 +10,7 @@ import type { Patient } from '@/types/Patient'; // optional typing
 import type { MsgType } from '@/types/MsgType';
 
 import { FaArrowUp } from 'react-icons/fa6';
+import { LuSquareMenu } from 'react-icons/lu';
 
 import Sidebar from './Sidebar';
 import Toolbar from './Toolbar';
@@ -17,29 +18,38 @@ import Toolbar from './Toolbar';
 import sampleQuestions from '@/data/sampleQuestions.json';
 import patients        from '@/data/patients.json';
 
+import SuggestionRow from './SuggestionsRow';
+
 import { mdxComponents }   from '@/utils/mdxComponents';
 import { mdxComponentsTyping }   from '@/utils/mdxComponents';
-import CollapsibleSections from './CollapsibleSections';
+
+const normalWidth = 300;
+const expandedWidth = 800;
+const normalHeight = 100;
+const expandedHeight = 600;
 
 export default function DemoPage() {
+  const mainRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
       patients.length > 0 ? patients[0] : null
     );  
 
+  const [isFocused, setIsFocused] = useState(false);
   const [isChatStarted, setIsChatStarted] = useState(false);
 
   const [pendingExpert, setPendingExpert] = useState<string | null>(null); // name of expert after classification
   const [isTyping, setIsTyping] = useState(false);
   const [typingMessage, setTypingMessage] = useState('');
   
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<MsgType[]>([]);
   const [historyMap, setHistoryMap] = useState<Record<string, MsgType[]>>({});
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [query, setQuery] = useState('');
-  
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -163,154 +173,214 @@ export default function DemoPage() {
     setIsChatStarted(existing.length > 0);
   }, [selectedPatient, historyMap]);
 
+  useEffect(() => {
+    if (window.electronAPI?.onWindowFocus) {
+      window.electronAPI.onWindowFocus((focused) => {
+        if (!focused) {
+          setIsFocused(false);
+          // Blur the textarea if it exists
+          if (textareaRef.current) {
+            textareaRef.current.blur();
+          }
+        }
+        // else, do nothing on focus
+      });
+    }
+  }, []);
+  
+  
+  
+  useEffect(() => {
+    const updateHeight = () => {
+      if (mainRef.current && window.electronAPI?.setWindowSize) {
+        const rect = mainRef.current.getBoundingClientRect();
+        // Use the expanded/normal width as desired
+        const width = isFocused ? expandedWidth : normalWidth;
+        window.electronAPI.setWindowSize(width, Math.ceil(rect.height));
+      }
+    };
+  
+    // Run once on mount
+    updateHeight();
+  
+    // Observe height changes
+    const observer = new window.ResizeObserver(updateHeight);
+    if (mainRef.current) observer.observe(mainRef.current);
+  
+    // Also re-run on width/focus change
+    // (so you can maintain your current focus-width logic)
+    // Optionally debounce if this gets spammy
+  
+    return () => {
+      observer.disconnect();
+    };
+  }, [isFocused, messages.length, isSidebarOpen, query]);
+  
+
+  useEffect(() => {
+    if (window.electronAPI?.setWindowSize) {
+      window.electronAPI.setWindowSize(
+        isFocused ? expandedWidth : normalWidth,
+        isFocused ? expandedHeight : normalHeight
+      );
+    }
+  }, [isFocused]);
+
   return (
     <>
-    <Sidebar 
-      isOpen={isSidebarOpen} 
-      setIsOpen={setIsSidebarOpen} 
-      selectedPatient={selectedPatient}
-      setSelectedPatient={setSelectedPatient}
-    />
-    <main className={` min-h-screen flex flex-col justify-center transition-all duration-300
-      ${isSidebarOpen ? 'ml-64' : ''}`}>
-      {/* Sidebar */}
-      
-      <div className="flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 text-center">
-        {/* Welcome Section */}
-        <div className={isChatStarted ? 'hidden' : 'z-100'}>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white">Serelora</h1>
-          <p className="mt-3 text-gray-600 dark:text-neutral-400">Instant clinical answers. Just ask.</p>
 
-          {/* Sample Questions */}
-          <div className="flex flex-wrap justify-center gap-2 mt-8 max-w-2xl">
-          {sampleQuestions.map((question, index) => (
-              <button
-              key={index}
-              onClick={() => handleSampleClick(question)}
-              className="z-100 cursor-pointer rounded-full !bg-white px-3 py-1 text-sm text-neutral-900 hover:bg-neutral-200 dark:!bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700 transition"
-              >
-              {question}
-              </button>
-          ))}
-          </div>
-        </div>
+    <main ref={mainRef} className={`flex flex-col text-center justify-center`}>
+        <div className={`w-full mx-auto`}>
+          {/* Chat Container */}
+          {isChatStarted && isFocused && 
+          <div 
+            className='rounded-xl bg-white/95 border border-neutral-300/30 w-full max-h-170 mx-auto p-4 mb-2 flex flex-col gap-2 custom-scroll'
+            style={{ overflowY: 'auto' }}
+            ref={chatContainerRef}
+          >
 
-        {/* Chat Container */}
-        <div 
-          className='w-full max-w-5xl overflow-y-auto mx-auto px-4 pb-4 fixed top-13 left-0 right-0 bottom-30 flex flex-col gap-2 custom-scroll' 
-          ref={chatContainerRef}
-        >
-          {messages.map((msg, index) => {
-            const isUser = msg.role === 'user';
+            {messages.map((msg, index) => {
+              const isUser = msg.role === 'user';
 
-            return (
-              <div
-                key={index}
-                className={`text-left px-4 py-2 rounded-2xl ${
-                  isUser
-                    ? 'max-w-[70%] bg-[#bfaa8d] dark:bg-neutral-700 text-white self-end rounded-br-sm'
-                    : 'my-2 text-black self-start dark:text-white rounded-bl-sm'
-                }`}
-              >
-                {isUser
-                  ? /* plain text for user messages */
-                  <p className="!font-normal whitespace-pre-line">
-                    {msg.content}
-                  </p>
-                  : /* markdown for bot messages */
-                    <div className=''>
-                    <Markdown 
-                      remarkPlugins={[remarkGfm]} 
-                      components={mdxComponents}
-                    >
-                      {msg.content}
-                    </Markdown>
-                    <Toolbar 
-                      agentName={pendingExpert}
-                      message={msg.content}
-                    />
-                    </div>
-                }
-              </div>
-            );
-          })}
-
-          {/* Pulsing Circle OR Typing Message */}
-          {isTyping && (
-            <div className="text-left px-4 py-2 rounded-2xl font-medium my-2 text-black self-start dark:text-white rounded-bl-sm">
-              {typingMessage === '' ? (
-                pendingExpert ? (
-                  <span className='animate-pulse'>
-                    <span className="font-bold">
-                      {pendingExpert.charAt(0).toUpperCase() + pendingExpert.slice(1)}
-                    </span> agent is working.
-                  </span>
-                ) : (
-                  <span className='animate-pulse'>
-                    Deploying agents.
-                  </span>
-                )
-              ) : (
-                <Markdown
-                  remarkPlugins={[remarkGfm]}
-                  components={mdxComponentsTyping}
+              return (
+                <div
+                  key={index}
+                  className={`text-left px-4 py-2 rounded-2xl ${
+                    isUser
+                      ? 'max-w-[70%] bg-neutral-200 self-end rounded-br-sm'
+                      : 'my-2 text-black self-start rounded-bl-sm'
+                  }`}
                 >
-                  {typingMessage}
-                </Markdown>
-              )}
-            </div>
-          )}
+                  {isUser
+                    ? /* plain text for user messages */
+                    <p className="!font-normal whitespace-pre-line">
+                      {msg.content}
+                    </p>
+                    : /* markdown for bot messages */
+                      <div className=''>
+                      <Markdown 
+                        remarkPlugins={[remarkGfm]} 
+                        components={mdxComponents}
+                      >
+                        {msg.content}
+                      </Markdown>
+                      <Toolbar 
+                        agentName={pendingExpert}
+                        message={msg.content}
+                      />
+                      </div>
+                  }
+                </div>
+              );
+            })}
+
+            {/* Pulsing Circle OR Typing Message */}
+            {isTyping && (
+              <div className="text-left px-4 py-2 rounded-2xl font-medium my-2 text-black self-start rounded-bl-sm">
+                {typingMessage === '' ? (
+                  pendingExpert ? (
+                    <span className='animate-pulse'>
+                      <span className="font-bold">
+                        {pendingExpert.charAt(0).toUpperCase() + pendingExpert.slice(1)}
+                      </span> agent is working.
+                    </span>
+                  ) : (
+                    <span className='animate-pulse'>
+                      Deploying agents.
+                    </span>
+                  )
+                ) : (
+                  <Markdown
+                    remarkPlugins={[remarkGfm]}
+                    components={mdxComponentsTyping}
+                  >
+                    {typingMessage}
+                  </Markdown>
+                )}
+              </div>
+            )}
 
 
 
-        </div>
+          </div>
+          }
 
-        {/* Input Container */}
-        <div className={`w-full max-w-2xl mx-auto px-4 pb-4  fixed bottom-0 left-0 right-0 
-          ${isChatStarted ? 'max-w-5xl' : 'md:mt-10 md:pb-10 md:static'}`}>
+        {isSidebarOpen &&
+          <Sidebar 
+            isOpen={isSidebarOpen} 
+            setIsOpen={setIsSidebarOpen} 
+            selectedPatient={selectedPatient}
+            setSelectedPatient={setSelectedPatient}
+          />
+        }
 
-          <div className="relative rounded-3xl dark:bg-neutral-800 bg-white p-4">
+        {isFocused && (
+          <SuggestionRow
+            suggestions={sampleQuestions}
+            onSuggestionClick={handleSampleClick}
+          />
+        )}
+        
+          <div className="relative rounded-xl bg-white/95 border border-neutral-300/30 p-4">
             {/* Scrollable wrapper with max height to avoid overlapping button */}
             <textarea
-            ref={textareaRef}
-            value={query}
-            onChange={(e) => {
+              ref={textareaRef}
+              value={query}
+              onChange={(e) => {
                 setQuery(e.target.value);
                 resizeTextarea();
-            }}
-            onKeyDown={handleKeyDown}
-            onInput={resizeTextarea}
-            placeholder="Ask a clinical question"
-            rows={1}
-            style={{
+              }}
+              onKeyDown={handleKeyDown}
+              onInput={resizeTextarea}
+              placeholder="Ask a clinical question"
+              rows={1}
+              style={{
                 resize: 'none',
                 maxHeight: '160px',
-                marginBottom: '1.5rem', // prevents overlap with the send button
+                marginBottom: '1.5rem',
                 overflowY: 'auto',
-            }}
-            className="w-full text-md bg-transparent focus:outline-none dark:text-white custom-scroll"
+              }}
+              className="w-full text-md bg-transparent focus:outline-none custom-scroll"
+              onFocus={() => setIsFocused(true)}
             />
+
 
             <div className="absolute bottom-2.5 left-3 right-3 flex justify-between items-center">
   
                 {/* Left-aligned buttons */}
                 <div className="flex gap-2">
-                    {/* Add more buttons here if needed */}
+                {!isSidebarOpen &&
+                <div className='z-50 flex flex-row'>
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="p-1 cursor-pointer text-gray-600 hover:text-gray-900 hover:bg-neutral-700 rounded-lg focus:bg-neutral-700"
+                  aria-label="Open sidebar" 
+                >
+                  <LuSquareMenu className="w-5 h-4" /> 
+                  
+                </button>
+                <p className='ml-0.5 mt-1.5 '>
+                  <span className='mr-1 font-bold text-gray-600'>{selectedPatient.name}</span>
+                  |
+                  <span className='ml-1 font-semibold text-gray-500'>{selectedPatient.room}</span>
+                </p>
+                </div>
+                }
                 </div>
 
                 {/* Right-aligned buttons (Send last) */}
                 <div className="flex gap-2 items-center">
                     {/* Add additional buttons to the left of send */}
-      
+                    
                     {/* Send Button */}
                     <button
                     type="button"
                     onClick={() => handleSend()}
                     disabled={!query.trim()}
-                    className={`p-2 inline-flex items-center justify-center rounded-full text-sm font-medium text-white transition
+                    className={`p-2 inline-flex items-center justify-center rounded-full text-sm font-medium transition
                         ${query.trim()
-                        ? 'bg-black cursor-pointer hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 dark:text-black'
-                        : 'bg-neutral-300 cursor-not-allowed dark:bg-neutral-700 dark:text-neutral-500'}`}
+                        ? 'bg-blue-600 cursor-pointer text-white hover:bg-neutral-800'
+                        : 'bg-neutral-300 cursor-not-allowed'}`}
                     >
                     <FaArrowUp className={`w-5 h-5 md:w-3.25 md:h-3.25`} aria-hidden="true" />
                     <span className="sr-only">Send</span>
@@ -320,15 +390,19 @@ export default function DemoPage() {
 
           </div>
         </div>
-      </div>
-
-      {/* Footer */}
-      <footer className={`z-100 text-center text-xs text-gray-600 dark:text-neutral-500 hidden ${isChatStarted ? '' : 'md:block'}`}>
-        © {new Date().getFullYear()} Serelora
-      </footer>
 
       {/* Scrollbar Styles */}
       <style jsx>{`
+
+        .suggestion-row::-webkit-scrollbar { display: none; }
+        .suggestion-row { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .custom-scroll {
+          -webkit-app-region: no-drag; /* Allow interaction */
+          overflow-y: auto;
+          pointer-events: auto;
+        }
+
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
             cursor: default; /* Doesn't always work, so add pointer-events fix */
@@ -344,10 +418,6 @@ export default function DemoPage() {
         .custom-scroll::-webkit-scrollbar-track {
             background: transparent;
             pointer-events: auto;
-        }
-
-        .dark .custom-scroll::-webkit-scrollbar-thumb {
-            background-color: rgba(200, 200, 200, 0.3);
         }
         `}</style>
 

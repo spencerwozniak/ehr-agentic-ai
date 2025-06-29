@@ -37,7 +37,7 @@ export const mdxComponents = {
 
   // Paragraph
   p: ({ children, ...props }) => (
-    <p className="text-base !font-normal dark:text-white mb-4 leading-relaxed" {...props}>
+    <p className="text-base !font-normal mb-4 leading-relaxed" {...props}>
       {children}
     </p>
   ),
@@ -173,7 +173,7 @@ export const mdxComponentsTyping = {
 
   // Paragraph
   p: ({ children, ...props }) => (
-    <p className="text-base !font-normal dark:text-white mb-4 leading-relaxed" {...props}>
+    <p className="text-base !font-normal mb-4 leading-relaxed" {...props}>
       {children}
     </p>
   ),
@@ -291,7 +291,7 @@ table: ({ children }) => {
       </thead>
       <tbody>
         {rows.map((row, i) => (
-          <tr key={i} className="border-b border-gray-200 dark:border-gray-700">
+          <tr key={i} className="border-b border-gray-200">
             {React.Children.map(row.props.children, (td) => (
               <td className="px-3 py-2 text-sm">{td.props.children}</td>
             ))}
