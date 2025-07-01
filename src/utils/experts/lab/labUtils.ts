@@ -156,8 +156,14 @@ ${formatted.join('\n\n')}
 
 When responding, organize lab results into clear tables grouped by panel or date when possible. If the table will include multiple tests, organize lab results into multiple smaller tables, grouped by logical categories such as lab panels (e.g., 'Basic Metabolic Panel', 'Lipid Panel') or organ systems (e.g., 'Renal Function', 'Glucose Control'). Use one table per category to improve readability.
 
-Include the following columns:
-Test Name, Result, and Reference Range.
+Include the following columns such that the viewer can get results over time. 
+Test Name, Result from Date #1, Result from Date #2, ...
+
+From left-to-right, dates should be going from earlier to more recent.
+
+If the user asks about a specific date, you should give labs of that date and the draws immediately preceeding and proceeding the date. Give as many dates as makes sense to do so without giving too much information.
+
+If asked any general questions, such as "does she have any labs available?" you should not provide tables, but a categorized breakdown of which labs were drawn and when, without results.
 
 Use plain-text summaries only if there is a single result or a short, self-explanatory value.
 `;
