@@ -2,10 +2,18 @@
 
 [![Try Demo | Serelora](https://img.shields.io/badge/Try%20Demo-Serelora-e1c66d?style=flat-square&logo=https://www.serelora.com/sun.jpg&logoColor=white&labelColor=0a3d5b)](https://www.serelora.com/demo)
 
+<img width="500" height="500" alt="serelora-desktop-app" src="https://github.com/user-attachments/assets/818aaabd-6336-4c12-8e09-c3858e9b9c6c" />
+<br/>
+EHR-Agnostic Agentic AI Client Desktop App
+
+---
+
 ![Node Version](https://img.shields.io/badge/node-%3E%3D18-brightgreen?style=flat-square&logo=node.js)  
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)  
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?style=flat-square&logo=tailwindcss)  
 ![Electron](https://img.shields.io/badge/Electron-28-47848F?style=flat-square&logo=electron)  
+
+---
 
 **Universal AI Interface for Physicians**  
 
