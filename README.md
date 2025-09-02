@@ -1,4 +1,4 @@
-# Agentic AI Integrations  
+# EHR-Agnostic Agentic AI Desktop Interface
 
 [![Try Demo | Serelora](https://img.shields.io/badge/Try%20Demo-Serelora-e1c66d?style=flat-square&logo=https://www.serelora.com/sun.jpg&logoColor=white&labelColor=0a3d5b)](https://www.serelora.com/demo)
 
